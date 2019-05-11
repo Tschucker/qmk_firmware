@@ -132,6 +132,12 @@ bool mcp23008_make_ready(unsigned char i2cAddress) {
   return mcp23008_init(i2cAddress);
 }
 
+unsigned char reverse(unsigned char b) {
+   b = (b & 0xF0) >> 4 | (b & 0x0F) << 4;
+   b = (b & 0xCC) >> 2 | (b & 0x33) << 2;
+   b = (b & 0xAA) >> 1 | (b & 0x55) << 1;
+   return b;
+}
 // Read all 8 inputs and return them
 uint8_t mcp23008_read(unsigned char i2cAddress) {
   uint8_t pins = 0;
@@ -150,7 +156,7 @@ uint8_t mcp23008_read(unsigned char i2cAddress) {
     initialized = false;
     return 0;
   }
-  pins = buf[0];
+  pins = reverse(buf[0]);
   return pins; //need to concatinate and not in the matrix code
 #else
 
@@ -181,5 +187,5 @@ done:
   }
 #endif
 
-  return pins;
+  return reverse(pins);
 }
